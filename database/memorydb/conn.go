@@ -16,7 +16,7 @@ type InMemoryConnectible interface {
 	Connect() (*redis.Client, error)
 }
 
-func NewInMemoryConection(connect InMemoryConnectible) {
+func NewInMemoryConnection(connect InMemoryConnectible) {
 	once.Do(func() {
 		var err error
 

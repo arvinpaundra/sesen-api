@@ -10,6 +10,7 @@ import (
 	"github.com/arvinpaundra/sesen-api/application/rest/router"
 	"github.com/arvinpaundra/sesen-api/config"
 	"github.com/arvinpaundra/sesen-api/core/util"
+	"github.com/arvinpaundra/sesen-api/database/memorydb"
 	"github.com/arvinpaundra/sesen-api/database/relationaldb"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
@@ -25,9 +26,11 @@ var restCmd = &cobra.Command{
 
 		relationaldb.NewConnection(relationaldb.NewPostgres())
 
+		memorydb.NewInMemoryConnection(memorydb.NewRedisDB())
+
 		g := gin.New()
 
-		router.Register(g, relationaldb.GetConnection())
+		router.Register(g, memorydb.GetInMemoryConnection(), relationaldb.GetConnection())
 
 		srv := http.Server{
 			Addr:    fmt.Sprintf(":%s", port),
@@ -35,6 +38,7 @@ var restCmd = &cobra.Command{
 		}
 
 		go func() {
+			log.Println("Starting REST server...")
 			if err := srv.ListenAndServe(); err != http.ErrServerClosed {
 				log.Fatalf("failed to start server: %s", err.Error())
 			}

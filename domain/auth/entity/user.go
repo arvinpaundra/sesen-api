@@ -4,11 +4,13 @@ import (
 	"github.com/arvinpaundra/sesen-api/core/trait"
 	"github.com/arvinpaundra/sesen-api/core/util"
 	"github.com/arvinpaundra/sesen-api/domain/auth/constant"
+	authdomevent "github.com/arvinpaundra/sesen-api/domain/auth/event"
 )
 
 type User struct {
 	trait.Createable
 	trait.Updateable
+	trait.EventSource
 
 	ID       string
 	Email    string
@@ -29,6 +31,16 @@ func NewUser(email, password, username, fullname string) *User {
 	}
 
 	user.MarkCreate()
+
+	// Raise domain event when user is created
+	userRegisteredEvent := authdomevent.NewUserRegisteredEvent(
+		user.ID,
+		user.Email,
+		user.Username,
+		user.Fullname,
+	)
+
+	user.AddDomainEvent(userRegisteredEvent)
 
 	return user
 }

@@ -12,6 +12,10 @@ rest:
 	@echo "Running REST on $(APP_NAME)" 
 	go run main.go rest -p $(REST_PORT)
 
+worker:
+	@echo "Running Worker on $(APP_NAME)"
+	go run main.go worker
+
 test:
 	@echo "Running tests on $(APP_NAME)"
 	go test -v -cover ./...
