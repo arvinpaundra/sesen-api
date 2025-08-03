@@ -10,20 +10,24 @@ import (
 	"github.com/arvinpaundra/sesen-api/domain/auth/dto/request"
 	"github.com/arvinpaundra/sesen-api/domain/auth/service"
 	"github.com/arvinpaundra/sesen-api/infrastructure/auth"
+	"github.com/arvinpaundra/sesen-api/infrastructure/event"
 	"github.com/arvinpaundra/sesen-api/infrastructure/shared"
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 )
 
 type AuthHandler struct {
 	db        *gorm.DB
+	rdb       *redis.Client
 	validator *validator.Validator
 }
 
-func NewAuthHandler(db *gorm.DB, validator *validator.Validator) *AuthHandler {
+func NewAuthHandler(db *gorm.DB, rdb *redis.Client, validator *validator.Validator) *AuthHandler {
 	return &AuthHandler{
 		db:        db,
+		rdb:       rdb,
 		validator: validator,
 	}
 }
@@ -43,9 +47,12 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		return
 	}
 
+	// Create Asynq publisher for domain events
 	svc := service.NewUserRegister(
 		auth.NewUserReaderRepository(h.db),
 		auth.NewUserWriterRepository(h.db),
+		auth.NewUnitOfWork(h.db),
+		event.CreateDomainEventPublisher(h.rdb),
 	)
 
 	err = svc.Execute(c.Request.Context(), payload)
