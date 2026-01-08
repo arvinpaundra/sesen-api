@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/arvinpaundra/sesen-api/core/token"
+	"github.com/arvinpaundra/sesen-api/domain/auth/constant"
 	"github.com/arvinpaundra/sesen-api/domain/auth/repository"
 	"github.com/arvinpaundra/sesen-api/domain/auth/response"
 )
@@ -36,6 +37,10 @@ func (s *CheckSession) Execute(ctx context.Context, command CheckSessionCommand)
 	user, err := s.userReader.FindUserById(ctx, claims.Identifier)
 	if err != nil {
 		return nil, err
+	}
+
+	if user.IsBanned() {
+		return nil, constant.ErrUserHasBeenBanned
 	}
 
 	result := &response.AuthenticatedUser{

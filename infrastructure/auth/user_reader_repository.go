@@ -37,6 +37,8 @@ func (r *UserReaderRepository) FindUserById(ctx context.Context, id string) (*en
 		Email:    userModel.Email,
 		Password: userModel.Password,
 		Fullname: userModel.Fullname,
+		Role:     constant.UserRole(userModel.Role),
+		Status:   constant.UserStatus(userModel.Status),
 	}
 
 	return &user, nil
@@ -58,6 +60,8 @@ func (r *UserReaderRepository) FindUserByEmail(ctx context.Context, email string
 		Email:    userModel.Email,
 		Password: userModel.Password,
 		Fullname: userModel.Fullname,
+		Role:     constant.UserRole(userModel.Role),
+		Status:   constant.UserStatus(userModel.Status),
 	}
 
 	return &user, nil
@@ -86,6 +90,8 @@ func (r *UserReaderRepository) FindUserWithActiveSessionsById(ctx context.Contex
 		ID:       userModel.ID.String(),
 		Email:    userModel.Email,
 		Fullname: userModel.Fullname,
+		Role:     constant.UserRole(userModel.Role),
+		Status:   constant.UserStatus(userModel.Status),
 	}
 
 	for _, sessionModel := range userModel.Sessions {

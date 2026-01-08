@@ -14,6 +14,8 @@ type User struct {
 	Email    string
 	Password string
 	Fullname string
+	Role     constant.UserRole
+	Status   constant.UserStatus
 
 	ActiveSessions []*Session
 }
@@ -24,6 +26,8 @@ func NewUser(email, password, fullname string) *User {
 		Email:    email,
 		Password: password,
 		Fullname: fullname,
+		Role:     constant.RoleStreamer,
+		Status:   constant.StatusActive,
 	}
 
 	user.MarkCreate()
@@ -67,4 +71,8 @@ func (u *User) RevokeSessionByRefreshToken(refreshToken string) error {
 	}
 
 	return constant.ErrInvalidRefreshToken
+}
+
+func (u *User) IsBanned() bool {
+	return u.Status == constant.StatusBanned
 }

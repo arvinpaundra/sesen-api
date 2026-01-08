@@ -10,4 +10,5 @@ var (
 	ErrWrongEmailOrPassword = errors.New("wrong email or password")
 	ErrInvalidAccessToken   = errors.New("invalid access token")
 	ErrInvalidRefreshToken  = errors.New("invalid refresh token")
+	ErrUserHasBeenBanned    = errors.New("user has been banned")
 )

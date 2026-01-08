@@ -47,6 +47,10 @@ func (s *UserLogin) Execute(ctx context.Context, command UserLoginCommand) (*res
 		return nil, err
 	}
 
+	if user.IsBanned() {
+		return nil, constant.ErrUserHasBeenBanned
+	}
+
 	err = util.CompareHashAndString(user.Password, command.Password)
 	if err != nil {
 		return nil, constant.ErrWrongEmailOrPassword

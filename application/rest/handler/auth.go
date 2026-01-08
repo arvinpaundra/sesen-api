@@ -103,6 +103,8 @@ func (h *AuthHandler) Login(c *gin.Context) {
 			c.JSON(http.StatusNotFound, format.NotFound(err.Error()))
 		case constant.ErrWrongEmailOrPassword:
 			c.JSON(http.StatusUnauthorized, format.Unauthorized(err.Error()))
+		case constant.ErrUserHasBeenBanned:
+			c.JSON(http.StatusForbidden, format.Forbidden(err.Error()))
 		default:
 			c.JSON(http.StatusInternalServerError, format.InternalServerError())
 		}
