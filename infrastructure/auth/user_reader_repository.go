@@ -67,6 +67,29 @@ func (r *UserReaderRepository) FindUserByEmail(ctx context.Context, email string
 	return &user, nil
 }
 
+func (r *UserReaderRepository) FindUserByUsername(ctx context.Context, username string) (*entity.User, error) {
+	var userModel model.User
+
+	if err := r.db.WithContext(ctx).Where("username = ?", username).First(&userModel).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, constant.ErrUserNotFound
+		}
+
+		return nil, err
+	}
+
+	user := entity.User{
+		ID:       userModel.ID.String(),
+		Email:    userModel.Email,
+		Password: userModel.Password,
+		Fullname: userModel.Fullname,
+		Role:     constant.UserRole(userModel.Role),
+		Status:   constant.UserStatus(userModel.Status),
+	}
+
+	return &user, nil
+}
+
 func (r *UserReaderRepository) FindUserWithActiveSessionsById(ctx context.Context, id string) (*entity.User, error) {
 	var userModel model.User
 

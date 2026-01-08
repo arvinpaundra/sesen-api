@@ -12,6 +12,7 @@ type User struct {
 
 	ID       string
 	Email    string
+	Username string
 	Password string
 	Fullname string
 	Role     constant.UserRole
@@ -20,10 +21,11 @@ type User struct {
 	ActiveSessions []*Session
 }
 
-func NewUser(email, password, fullname string) *User {
+func NewUser(email, username, password, fullname string) *User {
 	user := &User{
 		ID:       util.GenerateUUID(),
 		Email:    email,
+		Username: username,
 		Password: password,
 		Fullname: fullname,
 		Role:     constant.RoleStreamer,

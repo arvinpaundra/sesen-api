@@ -7,6 +7,7 @@ CREATE TYPE user_status AS ENUM ('active', 'banned');
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
+    username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     fullname VARCHAR(255) NOT NULL,
     role user_role NOT NULL DEFAULT 'streamer',

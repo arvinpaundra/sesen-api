@@ -12,6 +12,7 @@ import (
 
 type UserRegisterCommand struct {
 	Email    string `json:"email" validate:"required,email,max=50"`
+	Username string `json:"username" validate:"required,alphanum,min=3,max=50"`
 	Password string `json:"password" validate:"required,min=8"`
 	Fullname string `json:"fullname" validate:"required,min=3,max=100"`
 }
@@ -44,6 +45,15 @@ func (s *UserRegister) Execute(ctx context.Context, command UserRegisterCommand)
 		return constant.ErrEmailAlreadyExists
 	}
 
+	existingUser, err = s.userReader.FindUserByUsername(ctx, command.Username)
+	if err != nil && !errors.Is(err, constant.ErrUserNotFound) {
+		return err
+	}
+
+	if !existingUser.IsEmpty() {
+		return constant.ErrUsernameAlreadyExists
+	}
+
 	password, err := util.HashString(command.Password)
 	if err != nil {
 		return err
@@ -51,6 +61,7 @@ func (s *UserRegister) Execute(ctx context.Context, command UserRegisterCommand)
 
 	user := entity.NewUser(
 		command.Email,
+		command.Username,
 		password,
 		command.Fullname,
 	)

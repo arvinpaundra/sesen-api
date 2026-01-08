@@ -33,6 +33,7 @@ func (r *UserWriterRepository) insert(ctx context.Context, user *entity.User) er
 	userModel := model.User{
 		ID:       util.ParseUUID(user.ID),
 		Email:    user.Email,
+		Username: user.Username,
 		Password: user.Password,
 		Fullname: user.Fullname,
 		Role:     model.UserRole(user.Role),
