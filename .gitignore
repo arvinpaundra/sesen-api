@@ -1,0 +1,15 @@
+# IDE
+.idea
+.vscode
+
+# environments
+.env
+
+# tests
+*.out
+
+# builds
+/bin
+
+# debugs
+__debug_*
