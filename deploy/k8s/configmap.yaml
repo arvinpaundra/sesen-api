@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sesen-api-config
+  namespace: sesen
+data:
+  APP_MODE: 'production'

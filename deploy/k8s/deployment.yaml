@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sesen-api-deployment
+  namespace: sesen
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: sesen-api
+  template:
+    metadata:
+      labels:
+        app: sesen-api
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: sesen-api
+          image: IMAGE_PLACEHOLDER
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: sesen-api-config
+            - secretRef:
+                name: sesen-api-secret
+          resources:
+            requests:
+              memory: '128Mi'
+              cpu: '100m'
+            limits:
+              memory: '256Mi'
+              cpu: '500m'
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 60
+            timeoutSeconds: 2
+            failureThreshold: 3

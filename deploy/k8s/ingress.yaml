@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sesen-api-ingress
+  namespace: sesen
+  annotations:
+    kubernetes.io/ingress.class: traefik
+
+    external-dns.alpha.kubernetes.io/hostname: api-sesen.arvinpaundra.dev
+    external-dns.alpha.kubernetes.io/target: 70.153.192.21
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: 'true'
+
+    # traefik.ingress.kubernetes.io/router/entrypoints: web
+spec:
+  rules:
+    - host: api-sesen.arvinpaundra.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sesen-api-service
+                port:
+                  number: 80
