@@ -7,11 +7,11 @@ import (
 	"github.com/arvinpaundra/sesen-api/core/format"
 	"github.com/arvinpaundra/sesen-api/core/token"
 	"github.com/arvinpaundra/sesen-api/core/validator"
-	"github.com/arvinpaundra/sesen-api/domain/auth/constant"
-	"github.com/arvinpaundra/sesen-api/domain/auth/service"
-	infra "github.com/arvinpaundra/sesen-api/infrastructure/auth"
-	"github.com/arvinpaundra/sesen-api/infrastructure/auth/adapter"
+	"github.com/arvinpaundra/sesen-api/domain/user/constant"
+	"github.com/arvinpaundra/sesen-api/domain/user/service"
 	"github.com/arvinpaundra/sesen-api/infrastructure/shared"
+	infra "github.com/arvinpaundra/sesen-api/infrastructure/user"
+	"github.com/arvinpaundra/sesen-api/infrastructure/user/adapter"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -63,7 +63,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		h.logger.Error("failed to register user", zap.Error(err))
 
 		switch err {
-		case constant.ErrEmailAlreadyExists:
+		case constant.ErrEmailAlreadyExists, constant.ErrUsernameAlreadyExists:
 			c.JSON(http.StatusConflict, format.Conflict(err.Error()))
 		default:
 			c.JSON(http.StatusInternalServerError, format.InternalServerError())

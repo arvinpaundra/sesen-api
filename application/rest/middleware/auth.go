@@ -7,9 +7,9 @@ import (
 	"github.com/arvinpaundra/sesen-api/config"
 	"github.com/arvinpaundra/sesen-api/core/format"
 	"github.com/arvinpaundra/sesen-api/core/token"
-	"github.com/arvinpaundra/sesen-api/domain/auth/service"
 	"github.com/arvinpaundra/sesen-api/domain/shared/entity"
-	authinfra "github.com/arvinpaundra/sesen-api/infrastructure/auth"
+	"github.com/arvinpaundra/sesen-api/domain/user/service"
+	authinfra "github.com/arvinpaundra/sesen-api/infrastructure/user"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
