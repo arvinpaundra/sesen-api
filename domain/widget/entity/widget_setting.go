@@ -11,12 +11,12 @@ type WidgetSetting struct {
 	trait.Updateable
 	trait.Removeable
 
-	ID                    string
-	UserID                string
-	TTSEnabled            bool
-	NSFWFilter            bool
-	MessageDuration       int
-	MinimumDonationAmount int
+	ID              string
+	UserID          string
+	TTSEnabled      bool
+	NSFWFilter      bool
+	MessageDuration int
+	MinAmount       int64
 
 	QrCode *WidgetQrcode
 	Alert  *WidgetAlert
@@ -24,11 +24,11 @@ type WidgetSetting struct {
 
 func NewWidgetSetting(userID string) *WidgetSetting {
 	setting := &WidgetSetting{
-		ID:                    util.GenerateUUID(),
-		UserID:                userID,
-		NSFWFilter:            true,
-		MessageDuration:       int(constant.DefaultMessageDuration),
-		MinimumDonationAmount: constant.DefaultMinimumDonationAmount,
+		ID:              util.GenerateUUID(),
+		UserID:          userID,
+		NSFWFilter:      true,
+		MessageDuration: int(constant.DefaultMessageDuration),
+		MinAmount:       constant.DefaultMinimumDonationAmount,
 	}
 
 	setting.MarkCreate()

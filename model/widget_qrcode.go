@@ -1,13 +1,10 @@
 package model
 
 import (
-	"context"
 	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/datatypes"
-	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type WidgetQrcode struct {
@@ -18,11 +15,4 @@ type WidgetQrcode struct {
 	Styles      datatypes.JSON `gorm:"type:jsonb;column:styles"`
 	CreatedAt   time.Time      `gorm:"column:created_at"`
 	UpdatedAt   time.Time      `gorm:"column:updated_at"`
-}
-
-func (wq WidgetQrcode) GormValue(ctx context.Context, db *gorm.DB) clause.Expr {
-	return clause.Expr{
-		SQL:  "?",
-		Vars: []interface{}{wq},
-	}
 }

@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS widget_settings (
     tts_enabled BOOLEAN NOT NULL DEFAULT FALSE,
     nsfw_filter BOOLEAN NOT NULL DEFAULT FALSE,
     message_duration INT NOT NULL DEFAULT 10,
-    minimum_donation_amount INT NOT NULL DEFAULT 10000,
+    min_amount INT NOT NULL DEFAULT 10000,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)

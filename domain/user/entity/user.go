@@ -3,6 +3,7 @@ package entity
 import (
 	"github.com/arvinpaundra/sesen-api/core/trait"
 	"github.com/arvinpaundra/sesen-api/core/util"
+	"github.com/arvinpaundra/sesen-api/domain/shared/valueobject"
 	"github.com/arvinpaundra/sesen-api/domain/user/constant"
 )
 
@@ -18,6 +19,7 @@ type User struct {
 	Role     constant.UserRole
 	Status   constant.UserStatus
 	Token    string
+	Balance  valueobject.Money
 
 	ActiveSessions []*Session
 }

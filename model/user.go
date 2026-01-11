@@ -16,8 +16,8 @@ const (
 type UserStatus string
 
 const (
-	StatusActive UserStatus = "active"
-	StatusBanned UserStatus = "banned"
+	UserStatusActive UserStatus = "active"
+	UserStatusBanned UserStatus = "banned"
 )
 
 type User struct {
@@ -29,6 +29,7 @@ type User struct {
 	Role      UserRole   `gorm:"type:user_role;column:role"`
 	Status    UserStatus `gorm:"type:user_status;column:status"`
 	Token     string     `gorm:"column:token;unique"`
+	Balance   int64      `gorm:"column:balance;default:0"`
 	CreatedAt time.Time  `gorm:"column:created_at"`
 	UpdatedAt time.Time  `gorm:"column:updated_at"`
 

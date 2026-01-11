@@ -32,12 +32,12 @@ func (r *WidgetWriterRepository) Save(ctx context.Context, settings *entity.Widg
 
 func (r *WidgetWriterRepository) insert(ctx context.Context, settings *entity.WidgetSetting) error {
 	settingModel := model.WidgetSetting{
-		ID:                    util.ParseUUID(settings.ID),
-		UserID:                util.ParseUUID(settings.UserID),
-		TTSEnabled:            settings.TTSEnabled,
-		NSFWFilter:            settings.NSFWFilter,
-		MessageDuration:       settings.MessageDuration,
-		MinimumDonationAmount: settings.MinimumDonationAmount,
+		ID:              util.ParseUUID(settings.ID),
+		UserID:          util.ParseUUID(settings.UserID),
+		TTSEnabled:      settings.TTSEnabled,
+		NSFWFilter:      settings.NSFWFilter,
+		MessageDuration: settings.MessageDuration,
+		MinAmount:       settings.MinAmount,
 	}
 
 	if err := r.db.WithContext(ctx).Create(&settingModel).Error; err != nil {

@@ -12,6 +12,5 @@ var (
 	ErrInvalidAccessToken    = errors.New("invalid access token")
 	ErrInvalidRefreshToken   = errors.New("invalid refresh token")
 	ErrUserHasBeenBanned     = errors.New("user has been banned")
-
-	ErrAuthTransactionFailed = errors.New("auth: transaction operation failed in nested context")
+	ErrBalanceLessThanZero   = errors.New("balance cannot be less than zero")
 )
