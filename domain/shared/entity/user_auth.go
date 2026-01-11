@@ -1,10 +1,10 @@
 package entity
 
 type UserAuth struct {
-	UserId   string `json:"user_id"`
-	Email    string `json:"email"`
-	Username string `json:"username"`
-	Fullname string `json:"fullname"`
+	UserId   string
+	Email    string
+	Username string
+	Fullname string
 }
 
 func (u *UserAuth) GetUserId() string {

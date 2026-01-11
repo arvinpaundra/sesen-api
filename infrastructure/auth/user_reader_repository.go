@@ -35,7 +35,7 @@ func (r *UserReaderRepository) FindUserById(ctx context.Context, id string) (*en
 	user := entity.User{
 		ID:       userModel.ID.String(),
 		Email:    userModel.Email,
-		Password: userModel.Password,
+		Username: userModel.Username,
 		Fullname: userModel.Fullname,
 		Role:     constant.UserRole(userModel.Role),
 		Status:   constant.UserStatus(userModel.Status),
@@ -58,6 +58,7 @@ func (r *UserReaderRepository) FindUserByEmail(ctx context.Context, email string
 	user := entity.User{
 		ID:       userModel.ID.String(),
 		Email:    userModel.Email,
+		Username: userModel.Username,
 		Password: userModel.Password,
 		Fullname: userModel.Fullname,
 		Role:     constant.UserRole(userModel.Role),
@@ -81,7 +82,7 @@ func (r *UserReaderRepository) FindUserByUsername(ctx context.Context, username 
 	user := entity.User{
 		ID:       userModel.ID.String(),
 		Email:    userModel.Email,
-		Password: userModel.Password,
+		Username: userModel.Username,
 		Fullname: userModel.Fullname,
 		Role:     constant.UserRole(userModel.Role),
 		Status:   constant.UserStatus(userModel.Status),

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/arvinpaundra/sesen-api/core/util"
 	"github.com/arvinpaundra/sesen-api/domain/auth/constant"
 	"github.com/arvinpaundra/sesen-api/domain/auth/entity"
 	"github.com/arvinpaundra/sesen-api/domain/auth/repository"
@@ -18,20 +17,23 @@ type UserRegisterCommand struct {
 }
 
 type UserRegister struct {
-	userReader repository.UserReader
-	userWriter repository.UserWriter
-	uow        repository.UnitOfWork
+	userReader   repository.UserReader
+	userWriter   repository.UserWriter
+	uow          repository.UnitOfWork
+	widgetMapper repository.WidgetMapper
 }
 
 func NewUserRegister(
 	userReader repository.UserReader,
 	userWriter repository.UserWriter,
+	widgetMapper repository.WidgetMapper,
 	uow repository.UnitOfWork,
 ) *UserRegister {
 	return &UserRegister{
-		userReader: userReader,
-		userWriter: userWriter,
-		uow:        uow,
+		userReader:   userReader,
+		userWriter:   userWriter,
+		widgetMapper: widgetMapper,
+		uow:          uow,
 	}
 }
 
@@ -54,32 +56,41 @@ func (s *UserRegister) Execute(ctx context.Context, command UserRegisterCommand)
 		return constant.ErrUsernameAlreadyExists
 	}
 
-	password, err := util.HashString(command.Password)
-	if err != nil {
-		return err
-	}
-
-	user := entity.NewUser(
+	user, err := entity.NewUser(
 		command.Email,
 		command.Username,
-		password,
+		command.Password,
 		command.Fullname,
 	)
-
-	tx, err := s.uow.Begin()
 	if err != nil {
 		return err
 	}
 
-	if err := tx.UserWriter().Save(ctx, user); err != nil {
-		if uowErr := tx.Rollback(); uowErr != nil {
+	uow, err := s.uow.Begin(ctx)
+	if err != nil {
+		return err
+	}
+
+	err = uow.UserWriter().Save(ctx, user)
+	if err != nil {
+		if uowErr := uow.Rollback(); uowErr != nil {
 			return uowErr
 		}
 
 		return err
 	}
 
-	uowErr := tx.Commit()
+	// Pass transaction context to widget domain
+	err = s.widgetMapper.CreateDefaultWidgets(uow.Context(), user.ID, user.Username)
+	if err != nil {
+		if uowErr := uow.Rollback(); uowErr != nil {
+			return uowErr
+		}
+
+		return err
+	}
+
+	uowErr := uow.Commit()
 	if uowErr != nil {
 		return uowErr
 	}

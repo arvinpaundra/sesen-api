@@ -9,7 +9,8 @@ import (
 	"github.com/arvinpaundra/sesen-api/core/validator"
 	"github.com/arvinpaundra/sesen-api/domain/auth/constant"
 	"github.com/arvinpaundra/sesen-api/domain/auth/service"
-	"github.com/arvinpaundra/sesen-api/infrastructure/auth"
+	infra "github.com/arvinpaundra/sesen-api/infrastructure/auth"
+	"github.com/arvinpaundra/sesen-api/infrastructure/auth/adapter"
 	"github.com/arvinpaundra/sesen-api/infrastructure/shared"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -51,9 +52,10 @@ func (h *AuthHandler) Register(c *gin.Context) {
 
 	// Create Asynq publisher for domain events
 	svc := service.NewUserRegister(
-		auth.NewUserReaderRepository(h.db),
-		auth.NewUserWriterRepository(h.db),
-		auth.NewUnitOfWork(h.db),
+		infra.NewUserReaderRepository(h.db),
+		infra.NewUserWriterRepository(h.db),
+		adapter.NewWidgetAdapter(h.db),
+		infra.NewUnitOfWork(h.db),
 	)
 
 	err = svc.Execute(c.Request.Context(), command)
@@ -88,10 +90,10 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	}
 
 	svc := service.NewUserLogin(
-		auth.NewUserReaderRepository(h.db),
-		auth.NewUserWriterRepository(h.db),
+		infra.NewUserReaderRepository(h.db),
+		infra.NewUserWriterRepository(h.db),
 		token.NewJWT(config.GetString("JWT_SECRET")),
-		auth.NewUnitOfWork(h.db),
+		infra.NewUnitOfWork(h.db),
 	)
 
 	result, err := svc.Execute(c.Request.Context(), command)
@@ -130,11 +132,11 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 	}
 
 	svc := service.NewUserLogout(
-		auth.NewUserReaderRepository(h.db),
-		auth.NewUserWriterRepository(h.db),
+		infra.NewUserReaderRepository(h.db),
+		infra.NewUserWriterRepository(h.db),
 		token.NewJWT(config.GetString("JWT_SECRET")),
 		shared.NewAuthStorage(c),
-		auth.NewUnitOfWork(h.db),
+		infra.NewUnitOfWork(h.db),
 	)
 
 	err = svc.Execute(c.Request.Context(), command)
@@ -169,10 +171,10 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 	}
 
 	svc := service.NewRefreshToken(
-		auth.NewUserReaderRepository(h.db),
-		auth.NewUserWriterRepository(h.db),
+		infra.NewUserReaderRepository(h.db),
+		infra.NewUserWriterRepository(h.db),
 		token.NewJWT(config.GetString("JWT_SECRET")),
-		auth.NewUnitOfWork(h.db),
+		infra.NewUnitOfWork(h.db),
 	)
 
 	result, err := svc.Execute(c.Request.Context(), command)

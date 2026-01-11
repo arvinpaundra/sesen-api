@@ -1,0 +1,38 @@
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS widget_settings (
+    id UUID PRIMARY KEY,
+    user_id UUID NOT NULL UNIQUE,
+    tts_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    nsfw_filter BOOLEAN NOT NULL DEFAULT FALSE,
+    message_duration INT NOT NULL DEFAULT 10,
+    minimum_donation_amount INT NOT NULL DEFAULT 10000,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS widget_qrcodes (
+    id UUID PRIMARY KEY,
+    setting_id UUID NOT NULL UNIQUE,
+    qr_code_data TEXT NOT NULL,
+    styles JSONB NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (setting_id) REFERENCES widget_settings(id)
+);
+
+CREATE TABLE IF NOT EXISTS widget_alerts (
+    id UUID PRIMARY KEY,
+    setting_id UUID NOT NULL UNIQUE,
+    alert_text VARCHAR(100) NOT NULL,
+    alert_url TEXT NOT NULL,
+    attachment_url TEXT,
+    styles JSONB NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (setting_id) REFERENCES widget_settings(id)
+);
+
+COMMIT;

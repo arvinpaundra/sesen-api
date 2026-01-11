@@ -46,6 +46,7 @@ func (s *CheckSession) Execute(ctx context.Context, command CheckSessionCommand)
 	result := &response.AuthenticatedUser{
 		UserId:   user.ID,
 		Email:    user.Email,
+		Username: user.Username,
 		Fullname: user.Fullname,
 	}
 

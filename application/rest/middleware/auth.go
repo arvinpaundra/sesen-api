@@ -9,7 +9,7 @@ import (
 	"github.com/arvinpaundra/sesen-api/core/token"
 	"github.com/arvinpaundra/sesen-api/domain/auth/service"
 	"github.com/arvinpaundra/sesen-api/domain/shared/entity"
-	"github.com/arvinpaundra/sesen-api/infrastructure/auth"
+	authinfra "github.com/arvinpaundra/sesen-api/infrastructure/auth"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -34,7 +34,7 @@ func (a *Authenticate) Authenticate() gin.HandlerFunc {
 		accessToken := strings.Replace(bearerToken, "Bearer ", "", 1)
 
 		svc := service.NewCheckSession(
-			auth.NewUserReaderRepository(a.db),
+			authinfra.NewUserReaderRepository(a.db),
 			token.NewJWT(config.GetString("JWT_SECRET")),
 		)
 
@@ -51,6 +51,7 @@ func (a *Authenticate) Authenticate() gin.HandlerFunc {
 		session := &entity.UserAuth{
 			UserId:   res.UserId,
 			Email:    res.Email,
+			Username: res.Username,
 			Fullname: res.Fullname,
 		}
 

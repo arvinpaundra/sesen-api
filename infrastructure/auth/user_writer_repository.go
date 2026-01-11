@@ -38,6 +38,7 @@ func (r *UserWriterRepository) insert(ctx context.Context, user *entity.User) er
 		Fullname: user.Fullname,
 		Role:     model.UserRole(user.Role),
 		Status:   model.UserStatus(user.Status),
+		Token:    user.Token,
 	}
 
 	if err := r.db.WithContext(ctx).Create(&userModel).Error; err != nil {
@@ -52,7 +53,6 @@ func (r *UserWriterRepository) update(ctx context.Context, user *entity.User) er
 		Email:    user.Email,
 		Password: user.Password,
 		Fullname: user.Fullname,
-		Role:     model.UserRole(user.Role),
 		Status:   model.UserStatus(user.Status),
 	}
 

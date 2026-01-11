@@ -67,7 +67,7 @@ func (s *RefreshToken) Execute(ctx context.Context, command RefreshTokenCommand)
 
 	user.MarkUpdate()
 
-	tx, err := s.uow.Begin()
+	tx, err := s.uow.Begin(ctx)
 	if err != nil {
 		return nil, err
 	}

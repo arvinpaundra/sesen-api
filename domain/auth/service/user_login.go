@@ -72,7 +72,7 @@ func (s *UserLogin) Execute(ctx context.Context, command UserLoginCommand) (*res
 
 	user.MarkUpdate()
 
-	tx, err := s.uow.Begin()
+	tx, err := s.uow.Begin(ctx)
 	if err != nil {
 		return nil, err
 	}

@@ -7,9 +7,8 @@ type UnitOfWork interface {
 }
 
 type UnitOfWorkProcessor interface {
-	UserWriter() UserWriter
+	WidgetWriter() WidgetWriter
 
-	Context() context.Context
 	Commit() error
 	Rollback() error
 }

@@ -59,7 +59,7 @@ func (s *UserLogout) Execute(ctx context.Context, command UserLogoutCommand) err
 
 	user.MarkUpdate()
 
-	tx, err := s.uow.Begin()
+	tx, err := s.uow.Begin(ctx)
 	if err != nil {
 		return err
 	}

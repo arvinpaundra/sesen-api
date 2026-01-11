@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
     fullname VARCHAR(255) NOT NULL,
     role user_role NOT NULL DEFAULT 'streamer',
     status user_status NOT NULL DEFAULT 'active',
+    token VARCHAR(32) NOT NULL UNIQUE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
