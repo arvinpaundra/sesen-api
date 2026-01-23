@@ -6,12 +6,9 @@ import (
 	"github.com/arvinpaundra/sesen-api/core/token"
 	"github.com/arvinpaundra/sesen-api/domain/shared/interfaces"
 	"github.com/arvinpaundra/sesen-api/domain/user/constant"
+	"github.com/arvinpaundra/sesen-api/domain/user/dto/request"
 	"github.com/arvinpaundra/sesen-api/domain/user/repository"
 )
-
-type UserLogoutCommand struct {
-	AccessToken string `json:"access_token" validate:"required"`
-}
 
 type UserLogout struct {
 	userReader repository.UserReader
@@ -37,8 +34,8 @@ func NewUserLogout(
 	}
 }
 
-func (s *UserLogout) Execute(ctx context.Context, command UserLogoutCommand) error {
-	claims, err := s.token.Decode(command.AccessToken)
+func (s *UserLogout) Execute(ctx context.Context, payload request.UserLogoutPayload) error {
+	claims, err := s.token.Decode(payload.AccessToken)
 	if err != nil {
 		return err
 	}
@@ -52,7 +49,7 @@ func (s *UserLogout) Execute(ctx context.Context, command UserLogoutCommand) err
 		return constant.ErrInvalidAccessToken
 	}
 
-	err = user.RevokeSessionByAccessToken(command.AccessToken)
+	err = user.RevokeSessionByAccessToken(payload.AccessToken)
 	if err != nil {
 		return err
 	}

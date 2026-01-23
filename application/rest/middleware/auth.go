@@ -8,6 +8,7 @@ import (
 	"github.com/arvinpaundra/sesen-api/core/format"
 	"github.com/arvinpaundra/sesen-api/core/token"
 	"github.com/arvinpaundra/sesen-api/domain/shared/entity"
+	"github.com/arvinpaundra/sesen-api/domain/user/dto/request"
 	"github.com/arvinpaundra/sesen-api/domain/user/service"
 	authinfra "github.com/arvinpaundra/sesen-api/infrastructure/user"
 	"github.com/gin-gonic/gin"
@@ -38,11 +39,11 @@ func (a *Authenticate) Authenticate() gin.HandlerFunc {
 			token.NewJWT(config.GetString("JWT_SECRET")),
 		)
 
-		command := service.CheckSessionCommand{
+		payload := request.CheckSessionPayload{
 			AccessToken: accessToken,
 		}
 
-		res, err := svc.Execute(c.Request.Context(), command)
+		res, err := svc.Execute(c.Request.Context(), payload)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, format.Unauthorized(err.Error()))
 			return

@@ -8,6 +8,7 @@ import (
 	"github.com/arvinpaundra/sesen-api/core/token"
 	"github.com/arvinpaundra/sesen-api/core/validator"
 	"github.com/arvinpaundra/sesen-api/domain/user/constant"
+	"github.com/arvinpaundra/sesen-api/domain/user/dto/request"
 	"github.com/arvinpaundra/sesen-api/domain/user/service"
 	"github.com/arvinpaundra/sesen-api/infrastructure/shared"
 	infra "github.com/arvinpaundra/sesen-api/infrastructure/user"
@@ -36,15 +37,15 @@ func NewAuthHandler(
 }
 
 func (h *AuthHandler) Register(c *gin.Context) {
-	var command service.UserRegisterCommand
+	var payload request.UserRegisterPayload
 
-	err := c.ShouldBindJSON(&command)
+	err := c.ShouldBindJSON(&payload)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, format.UnprocessableEntity(err.Error()))
 		return
 	}
 
-	verrs := h.validator.Validate(command)
+	verrs := h.validator.Validate(payload)
 	if verrs != nil {
 		c.JSON(http.StatusBadRequest, format.BadRequest("invalid request body", verrs))
 		return
@@ -58,7 +59,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		infra.NewUnitOfWork(h.db),
 	)
 
-	err = svc.Execute(c.Request.Context(), command)
+	err = svc.Execute(c.Request.Context(), payload)
 	if err != nil {
 		h.logger.Error("failed to register user", zap.Error(err))
 
@@ -75,15 +76,15 @@ func (h *AuthHandler) Register(c *gin.Context) {
 }
 
 func (h *AuthHandler) Login(c *gin.Context) {
-	var command service.UserLoginCommand
+	var payload request.UserLoginPayload
 
-	err := c.ShouldBindJSON(&command)
+	err := c.ShouldBindJSON(&payload)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, format.UnprocessableEntity(err.Error()))
 		return
 	}
 
-	verrs := h.validator.Validate(command)
+	verrs := h.validator.Validate(payload)
 	if verrs != nil {
 		c.JSON(http.StatusBadRequest, format.BadRequest("invalid request body", verrs))
 		return
@@ -96,7 +97,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		infra.NewUnitOfWork(h.db),
 	)
 
-	result, err := svc.Execute(c.Request.Context(), command)
+	result, err := svc.Execute(c.Request.Context(), payload)
 	if err != nil {
 		h.logger.Error("failed to login user", zap.Error(err))
 
@@ -117,15 +118,15 @@ func (h *AuthHandler) Login(c *gin.Context) {
 }
 
 func (h *AuthHandler) Logout(c *gin.Context) {
-	var command service.UserLogoutCommand
+	var payload request.UserLogoutPayload
 
-	err := c.ShouldBindJSON(&command)
+	err := c.ShouldBindJSON(&payload)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, format.UnprocessableEntity(err.Error()))
 		return
 	}
 
-	verrs := h.validator.Validate(command)
+	verrs := h.validator.Validate(payload)
 	if verrs != nil {
 		c.JSON(http.StatusBadRequest, format.BadRequest("invalid request body", verrs))
 		return
@@ -139,7 +140,7 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 		infra.NewUnitOfWork(h.db),
 	)
 
-	err = svc.Execute(c.Request.Context(), command)
+	err = svc.Execute(c.Request.Context(), payload)
 	if err != nil {
 		h.logger.Error("failed to logout user", zap.Error(err))
 
@@ -156,15 +157,15 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 }
 
 func (h *AuthHandler) RefreshToken(c *gin.Context) {
-	var command service.RefreshTokenCommand
+	var payload request.RefreshTokenPayload
 
-	err := c.ShouldBindJSON(&command)
+	err := c.ShouldBindJSON(&payload)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, format.UnprocessableEntity(err.Error()))
 		return
 	}
 
-	verrs := h.validator.Validate(command)
+	verrs := h.validator.Validate(payload)
 	if verrs != nil {
 		c.JSON(http.StatusBadRequest, format.BadRequest("invalid request body", verrs))
 		return
@@ -177,7 +178,7 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 		infra.NewUnitOfWork(h.db),
 	)
 
-	result, err := svc.Execute(c.Request.Context(), command)
+	result, err := svc.Execute(c.Request.Context(), payload)
 	if err != nil {
 		h.logger.Error("failed to refresh token", zap.Error(err))
 

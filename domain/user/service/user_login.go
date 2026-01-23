@@ -7,15 +7,11 @@ import (
 	"github.com/arvinpaundra/sesen-api/core/token"
 	"github.com/arvinpaundra/sesen-api/core/util"
 	"github.com/arvinpaundra/sesen-api/domain/user/constant"
+	"github.com/arvinpaundra/sesen-api/domain/user/dto/request"
+	"github.com/arvinpaundra/sesen-api/domain/user/dto/response"
 	"github.com/arvinpaundra/sesen-api/domain/user/entity"
 	"github.com/arvinpaundra/sesen-api/domain/user/repository"
-	"github.com/arvinpaundra/sesen-api/domain/user/response"
 )
-
-type UserLoginCommand struct {
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required"`
-}
 
 type UserLogin struct {
 	userReader repository.UserReader
@@ -38,8 +34,8 @@ func NewUserLogin(
 	}
 }
 
-func (s *UserLogin) Execute(ctx context.Context, command UserLoginCommand) (*response.UserLogin, error) {
-	user, err := s.userReader.FindUserByEmail(ctx, command.Email)
+func (s *UserLogin) Execute(ctx context.Context, payload request.UserLoginPayload) (*response.UserLogin, error) {
+	user, err := s.userReader.FindUserByEmail(ctx, payload.Email)
 	if err != nil {
 		if errors.Is(err, constant.ErrUserNotFound) {
 			return nil, constant.ErrWrongEmailOrPassword
@@ -51,7 +47,7 @@ func (s *UserLogin) Execute(ctx context.Context, command UserLoginCommand) (*res
 		return nil, constant.ErrUserHasBeenBanned
 	}
 
-	err = util.CompareHashAndString(user.Password, command.Password)
+	err = util.CompareHashAndString(user.Password, payload.Password)
 	if err != nil {
 		return nil, constant.ErrWrongEmailOrPassword
 	}

@@ -11,17 +11,17 @@ import (
 	"gorm.io/gorm"
 )
 
-var _ repository.DonationWriter = (*DonationWriter)(nil)
+var _ repository.DonationWriter = (*DonationWriterRepository)(nil)
 
-type DonationWriter struct {
+type DonationWriterRepository struct {
 	db *gorm.DB
 }
 
-func NewDonationWriter(db *gorm.DB) *DonationWriter {
-	return &DonationWriter{db: db}
+func NewDonationWriterRepository(db *gorm.DB) *DonationWriterRepository {
+	return &DonationWriterRepository{db: db}
 }
 
-func (w *DonationWriter) Save(ctx context.Context, donation *entity.Donation) error {
+func (w *DonationWriterRepository) Save(ctx context.Context, donation *entity.Donation) error {
 	if donation.IsUpdated() {
 		return w.update(ctx, donation)
 	}
@@ -29,7 +29,7 @@ func (w *DonationWriter) Save(ctx context.Context, donation *entity.Donation) er
 	return w.insert(ctx, donation)
 }
 
-func (w *DonationWriter) insert(ctx context.Context, donation *entity.Donation) error {
+func (w *DonationWriterRepository) insert(ctx context.Context, donation *entity.Donation) error {
 	donationModel := model.Donation{
 		ID:            util.ParseUUID(donation.ID),
 		ToUserId:      util.ParseUUID(donation.ToUserID),
@@ -48,6 +48,6 @@ func (w *DonationWriter) insert(ctx context.Context, donation *entity.Donation) 
 	return nil
 }
 
-func (w *DonationWriter) update(_ context.Context, _ *entity.Donation) error {
+func (w *DonationWriterRepository) update(_ context.Context, _ *entity.Donation) error {
 	return nil
 }

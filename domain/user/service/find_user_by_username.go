@@ -3,13 +3,10 @@ package service
 import (
 	"context"
 
+	"github.com/arvinpaundra/sesen-api/domain/user/dto/request"
+	"github.com/arvinpaundra/sesen-api/domain/user/dto/response"
 	"github.com/arvinpaundra/sesen-api/domain/user/repository"
-	"github.com/arvinpaundra/sesen-api/domain/user/response"
 )
-
-type FindUserByUsernameCommand struct {
-	Username string
-}
 
 type FindUserByUsername struct {
 	userReader repository.UserReader
@@ -23,8 +20,8 @@ func NewFindUserByUsername(
 	}
 }
 
-func (s *FindUserByUsername) Execute(ctx context.Context, command FindUserByUsernameCommand) (response.User, error) {
-	user, err := s.userReader.FindUserByUsername(ctx, command.Username)
+func (s *FindUserByUsername) Execute(ctx context.Context, payload request.FindUserByUsernamePayload) (response.User, error) {
+	user, err := s.userReader.FindUserByUsername(ctx, payload.Username)
 	if err != nil {
 		return response.User{}, err
 	}

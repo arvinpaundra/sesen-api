@@ -5,16 +5,10 @@ import (
 	"errors"
 
 	"github.com/arvinpaundra/sesen-api/domain/user/constant"
+	"github.com/arvinpaundra/sesen-api/domain/user/dto/request"
 	"github.com/arvinpaundra/sesen-api/domain/user/entity"
 	"github.com/arvinpaundra/sesen-api/domain/user/repository"
 )
-
-type UserRegisterCommand struct {
-	Email    string `json:"email" validate:"required,email,max=50"`
-	Username string `json:"username" validate:"required,alphanum,min=3,max=50"`
-	Password string `json:"password" validate:"required,min=8"`
-	Fullname string `json:"fullname" validate:"required,min=3,max=100"`
-}
 
 type UserRegister struct {
 	userReader   repository.UserReader
@@ -37,8 +31,8 @@ func NewUserRegister(
 	}
 }
 
-func (s *UserRegister) Execute(ctx context.Context, command UserRegisterCommand) error {
-	existingUser, err := s.userReader.FindUserByEmail(ctx, command.Email)
+func (s *UserRegister) Execute(ctx context.Context, payload request.UserRegisterPayload) error {
+	existingUser, err := s.userReader.FindUserByEmail(ctx, payload.Email)
 	if err != nil && !errors.Is(err, constant.ErrUserNotFound) {
 		return err
 	}
@@ -47,7 +41,7 @@ func (s *UserRegister) Execute(ctx context.Context, command UserRegisterCommand)
 		return constant.ErrEmailAlreadyExists
 	}
 
-	existingUser, err = s.userReader.FindUserByUsername(ctx, command.Username)
+	existingUser, err = s.userReader.FindUserByUsername(ctx, payload.Username)
 	if err != nil && !errors.Is(err, constant.ErrUserNotFound) {
 		return err
 	}
@@ -57,10 +51,10 @@ func (s *UserRegister) Execute(ctx context.Context, command UserRegisterCommand)
 	}
 
 	user, err := entity.NewUser(
-		command.Email,
-		command.Username,
-		command.Password,
-		command.Fullname,
+		payload.Email,
+		payload.Username,
+		payload.Password,
+		payload.Fullname,
 	)
 	if err != nil {
 		return err

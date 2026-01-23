@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/arvinpaundra/sesen-api/domain/user/repository"
+	"github.com/arvinpaundra/sesen-api/domain/widget/dto/request"
 	"github.com/arvinpaundra/sesen-api/domain/widget/service"
 	infra "github.com/arvinpaundra/sesen-api/infrastructure/widget"
 	"gorm.io/gorm"
@@ -26,10 +27,10 @@ func (w *WidgetAdapter) CreateDefaultWidgets(ctx context.Context, userID, userna
 		infra.NewUnitOfWork(w.db),
 	)
 
-	command := service.CreateDefaultWidgetsCommand{
+	payload := request.CreateDefaultWidgetsPayload{
 		UserID:   userID,
 		Username: username,
 	}
 
-	return svc.Execute(ctx, command)
+	return svc.Execute(ctx, payload)
 }

@@ -5,14 +5,11 @@ import (
 
 	"github.com/arvinpaundra/sesen-api/core/token"
 	"github.com/arvinpaundra/sesen-api/domain/user/constant"
+	"github.com/arvinpaundra/sesen-api/domain/user/dto/request"
+	"github.com/arvinpaundra/sesen-api/domain/user/dto/response"
 	"github.com/arvinpaundra/sesen-api/domain/user/entity"
 	"github.com/arvinpaundra/sesen-api/domain/user/repository"
-	"github.com/arvinpaundra/sesen-api/domain/user/response"
 )
-
-type RefreshTokenCommand struct {
-	RefreshToken string `json:"refresh_token" validate:"required"`
-}
 
 type RefreshToken struct {
 	userReader repository.UserReader
@@ -35,8 +32,8 @@ func NewRefreshToken(
 	}
 }
 
-func (s *RefreshToken) Execute(ctx context.Context, command RefreshTokenCommand) (*response.RefreshToken, error) {
-	claims, err := s.tokenable.Decode(command.RefreshToken)
+func (s *RefreshToken) Execute(ctx context.Context, payload request.RefreshTokenPayload) (*response.RefreshToken, error) {
+	claims, err := s.tokenable.Decode(payload.RefreshToken)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +43,7 @@ func (s *RefreshToken) Execute(ctx context.Context, command RefreshTokenCommand)
 		return nil, err
 	}
 
-	err = user.RevokeSessionByRefreshToken(command.RefreshToken)
+	err = user.RevokeSessionByRefreshToken(payload.RefreshToken)
 	if err != nil {
 		return nil, err
 	}

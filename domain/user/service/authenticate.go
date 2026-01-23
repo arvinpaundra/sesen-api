@@ -5,13 +5,10 @@ import (
 
 	"github.com/arvinpaundra/sesen-api/core/token"
 	"github.com/arvinpaundra/sesen-api/domain/user/constant"
+	"github.com/arvinpaundra/sesen-api/domain/user/dto/request"
+	"github.com/arvinpaundra/sesen-api/domain/user/dto/response"
 	"github.com/arvinpaundra/sesen-api/domain/user/repository"
-	"github.com/arvinpaundra/sesen-api/domain/user/response"
 )
-
-type CheckSessionCommand struct {
-	AccessToken string `json:"access_token" binding:"required"`
-}
 
 type CheckSession struct {
 	userReader repository.UserReader
@@ -28,8 +25,8 @@ func NewCheckSession(
 	}
 }
 
-func (s *CheckSession) Execute(ctx context.Context, command CheckSessionCommand) (*response.AuthenticatedUser, error) {
-	claims, err := s.tokenable.Decode(command.AccessToken)
+func (s *CheckSession) Execute(ctx context.Context, payload request.CheckSessionPayload) (*response.AuthenticatedUser, error) {
+	claims, err := s.tokenable.Decode(payload.AccessToken)
 	if err != nil {
 		return nil, err
 	}

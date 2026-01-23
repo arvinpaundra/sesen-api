@@ -4,14 +4,10 @@ import (
 	"context"
 
 	"github.com/arvinpaundra/sesen-api/domain/widget/constant"
+	"github.com/arvinpaundra/sesen-api/domain/widget/dto/request"
 	"github.com/arvinpaundra/sesen-api/domain/widget/entity"
 	"github.com/arvinpaundra/sesen-api/domain/widget/repository"
 )
-
-type CreateDefaultWidgetsCommand struct {
-	UserID   string `json:"user_id"`
-	Username string `json:"username"`
-}
 
 type CreateDefaultWidgets struct {
 	widgetReader repository.WidgetReader
@@ -31,9 +27,9 @@ func NewCreateDefaultWidgets(
 	}
 }
 
-func (s *CreateDefaultWidgets) Execute(ctx context.Context, command CreateDefaultWidgetsCommand) error {
+func (s *CreateDefaultWidgets) Execute(ctx context.Context, payload request.CreateDefaultWidgetsPayload) error {
 	// check if user already has widget settings
-	hasSettings, err := s.widgetReader.HasWidgetSettings(ctx, command.UserID)
+	hasSettings, err := s.widgetReader.HasWidgetSettings(ctx, payload.UserID)
 	if err != nil {
 		return err
 	}
@@ -43,10 +39,10 @@ func (s *CreateDefaultWidgets) Execute(ctx context.Context, command CreateDefaul
 	}
 
 	// create default widget settings
-	settings := entity.NewWidgetSetting(command.UserID)
+	settings := entity.NewWidgetSetting(payload.UserID)
 
 	// create default widget qr code
-	qrcode := entity.NewWidgetQrcode(settings.ID, command.Username)
+	qrcode := entity.NewWidgetQrcode(settings.ID, payload.Username)
 
 	settings.AddQrCode(qrcode)
 

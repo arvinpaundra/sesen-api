@@ -5,6 +5,7 @@ import (
 
 	"github.com/arvinpaundra/sesen-api/domain/donation/entity"
 	"github.com/arvinpaundra/sesen-api/domain/donation/repository"
+	"github.com/arvinpaundra/sesen-api/domain/user/dto/request"
 	"github.com/arvinpaundra/sesen-api/domain/user/service"
 	infra "github.com/arvinpaundra/sesen-api/infrastructure/user"
 	"gorm.io/gorm"
@@ -21,13 +22,13 @@ func NewUserAdapter(db *gorm.DB) *UserAdapter {
 }
 
 func (u *UserAdapter) FindUserByUsername(ctx context.Context, username string) (entity.User, error) {
-	command := service.FindUserByUsernameCommand{
+	payload := request.FindUserByUsernamePayload{
 		Username: username,
 	}
 
 	svc := service.NewFindUserByUsername(infra.NewUserReaderRepository(u.db))
 
-	user, err := svc.Execute(ctx, command)
+	user, err := svc.Execute(ctx, payload)
 	if err != nil {
 		return entity.User{}, err
 	}
