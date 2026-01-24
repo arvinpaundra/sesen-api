@@ -11,6 +11,7 @@ require (
 	github.com/redis/go-redis/v9 v9.17.2
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
+	github.com/xendit/xendit-go/v7 v7.0.0
 	go.uber.org/zap v1.27.1
 	golang.org/x/crypto v0.46.0
 	gorm.io/datatypes v1.2.7

@@ -5,40 +5,36 @@ import (
 	"fmt"
 
 	"github.com/arvinpaundra/sesen-api/domain/donation/constant"
+	"github.com/arvinpaundra/sesen-api/domain/donation/dto/request"
 	"github.com/arvinpaundra/sesen-api/domain/donation/entity"
 	"github.com/arvinpaundra/sesen-api/domain/donation/repository"
 	"github.com/arvinpaundra/sesen-api/domain/shared/valueobject"
 )
 
-type CreateDonationCommand struct {
-	Username      string  `json:"username" validate:"required"`
-	Amount        int64   `json:"amount" validate:"required,gt=0"`
-	PaymentMethod string  `json:"payment_method" validate:"required,oneof=gopay shopeepay dana qris link_aja"`
-	Name          *string `json:"name"`
-	Message       *string `json:"message"`
-}
-
 type CreateDonation struct {
-	userMapper   repository.UserMapper
-	widgetMapper repository.WidgetMapper
-	uow          repository.UnitOfWork
+	userMapper    repository.UserMapper
+	widgetMapper  repository.WidgetMapper
+	paymentMapper repository.PaymentMapper
+	uow           repository.UnitOfWork
 }
 
 func NewCreateDonation(
 	userMapper repository.UserMapper,
 	widgetMapper repository.WidgetMapper,
+	paymentMapper repository.PaymentMapper,
 	uow repository.UnitOfWork,
 ) *CreateDonation {
 	return &CreateDonation{
-		userMapper:   userMapper,
-		widgetMapper: widgetMapper,
-		uow:          uow,
+		userMapper:    userMapper,
+		widgetMapper:  widgetMapper,
+		paymentMapper: paymentMapper,
+		uow:           uow,
 	}
 }
 
-func (s *CreateDonation) Execute(ctx context.Context, command CreateDonationCommand) error {
+func (s *CreateDonation) Execute(ctx context.Context, payload request.CreateDonationPayload) error {
 	// find donated user by username
-	user, err := s.userMapper.FindUserByUsername(ctx, command.Username)
+	user, err := s.userMapper.FindUserByUsername(ctx, payload.Username)
 	if err != nil {
 		return err
 	}
@@ -49,12 +45,12 @@ func (s *CreateDonation) Execute(ctx context.Context, command CreateDonationComm
 		return err
 	}
 
-	if command.Amount < settings.MinAmount {
+	if !payload.IsAmountValid(settings.MinAmount) {
 		return fmt.Errorf("%s: %d", constant.ErrDonationAmountBelowMinimum, settings.MinAmount)
 	}
 
 	// create donation entity
-	amount, err := valueobject.NewMoney(command.Amount)
+	amount, err := valueobject.NewMoney(payload.Amount)
 	if err != nil {
 		return err
 	}
@@ -62,14 +58,14 @@ func (s *CreateDonation) Execute(ctx context.Context, command CreateDonationComm
 	donation, err := entity.NewDonation(
 		user.ID,
 		amount,
-		constant.PaymentMethod(command.PaymentMethod),
+		constant.PaymentMethod(payload.PaymentMethod),
 	)
 	if err != nil {
 		return err
 	}
 
-	donation.SetDonorName(command.Name)
-	donation.SetMessage(command.Message)
+	donation.SetDonorName(payload.Name)
+	donation.SetMessage(payload.Message)
 
 	// save donation to database
 	tx, err := s.uow.Begin(ctx)
@@ -86,6 +82,30 @@ func (s *CreateDonation) Execute(ctx context.Context, command CreateDonationComm
 	}
 
 	// process payment via payment gateway
+	paymentPayload := request.CreatePayment{
+		UserID:      user.ID,
+		ReferenceID: donation.ID,
+		Amount:      float64(donation.Amount.Number()),
+		Method:      donation.PaymentMethod,
+	}
+
+	paymentURL, err := s.paymentMapper.Pay(ctx, paymentPayload)
+	if err != nil {
+		if uowErr := tx.Rollback(); uowErr != nil {
+			return uowErr
+		}
+		return fmt.Errorf("failed to create payment: %w", err)
+	}
+
+	// store payment gateway reference
+	donation.SetPaymentGatewayRef(&paymentURL)
+	err = tx.DonationWriter().Save(ctx, donation)
+	if err != nil {
+		if uowErr := tx.Rollback(); uowErr != nil {
+			return uowErr
+		}
+		return err
+	}
 
 	// commit transaction
 	uowErr := tx.Commit()

@@ -21,5 +21,6 @@ const (
 )
 
 const (
-	DefaultCurrency = "IDR"
+	DefaultCurrency  = "IDR"
+	CategoryDonation = "donation"
 )
