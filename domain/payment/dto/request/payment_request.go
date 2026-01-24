@@ -8,5 +8,4 @@ type PaymentRequestPayload struct {
 	CustomerName       string  `json:"customer_name"`
 	SuccessRedirectURL string  `json:"success_redirect_url"`
 	FailureRedirectURL string  `json:"failure_redirect_url"`
-	CallbackURL        string  `json:"callback_url"`
 }

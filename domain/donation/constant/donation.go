@@ -12,6 +12,10 @@ const (
 
 type PaymentMethod string
 
+func (pm PaymentMethod) String() string {
+	return string(pm)
+}
+
 const (
 	PaymentMethodGopay     PaymentMethod = "gopay"
 	PaymentMethodShopeepay PaymentMethod = "shopeepay"

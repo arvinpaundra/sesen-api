@@ -29,9 +29,11 @@ func NewPaymentAdapter(db *gorm.DB, client *xendit.APIClient) *PaymentAdapter {
 
 func (p *PaymentAdapter) Pay(ctx context.Context, payload donationrequest.CreatePayment) (string, error) {
 	paymentPayload := paymentrequest.CreatePaymentPayload{
+		UserID:      payload.UserID,
 		ReferenceID: payload.ReferenceID,
+		UserName:    payload.UserName,
 		Amount:      payload.Amount,
-		Method:      string(payload.Method),
+		Method:      payload.Method.String(),
 	}
 
 	svc := service.NewCreatePayment(

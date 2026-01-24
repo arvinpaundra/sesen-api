@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 
+	"github.com/arvinpaundra/sesen-api/config"
 	"github.com/arvinpaundra/sesen-api/domain/payment/dto/request"
 	"github.com/arvinpaundra/sesen-api/domain/payment/repository"
 )
@@ -28,10 +29,9 @@ func (s *CreatePayment) Execute(ctx context.Context, payload request.CreatePayme
 		ReferenceID:        payload.ReferenceID,
 		Amount:             int64(payload.Amount),
 		Method:             payload.Method,
-		CustomerName:       "", // TODO: Get from payload if needed
-		SuccessRedirectURL: "", // TODO: Get from config or payload
-		FailureRedirectURL: "", // TODO: Get from config or payload
-		CallbackURL:        "", // TODO: Get from config or payload
+		CustomerName:       payload.UserName,
+		SuccessRedirectURL: config.GetString("DONATE_SUCCESS_REDIRECT_URL"),
+		FailureRedirectURL: config.GetString("DONATE_FAILURE_REDIRECT_URL"),
 	}
 
 	token, err := s.paymentGatewayMapper.Pay(ctx, paymentRequest)
